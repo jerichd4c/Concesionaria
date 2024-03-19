@@ -29,6 +29,56 @@ struct Cars {
     int bought_for;
 };
 
+// Funcion X1 
+Cars readCurrentCar(fstream& file) {
+    Cars car;
+    string line;
+    if (getline(file, line)) {
+        istringstream iss(line);
+        string token;
+
+        getline(iss, token, ';');
+        car.id = atoi(token.c_str());
+        getline(iss, car.maker, ';');
+        getline(iss, car.model, ';');
+        car.year = atoi(token.c_str());
+        car.sold_to = atoi(token.c_str());
+        car.bought_to = atoi(token.c_str());
+        car.sold_for = atoi(token.c_str());
+    	car.bought_for = atoi(token.c_str());
+    }
+    return car;
+}
+
+//Funcion X2
+void writeCurrentCar(fstream& file, const Cars& car) {
+    file << car.id << ';' << car.maker << ';' << car.model << ';'
+         << car.year << ';' << car.sold_to << ';' << car.bought_to << ';' << car.sold_for << ';' << car.bought_for << '\n';
+}
+
+// Funcion X3
+Client readCurrentClient(fstream& file) {
+    Client client;
+    string line;
+    if (getline(file, line)) {
+        istringstream iss(line);
+        string token;
+
+        getline(iss, token, ';');
+        client.id = atoi(token.c_str());
+        getline(iss, client.first_name , ';');
+        getline(iss, client.last_name , ';');
+        getline(iss, client.email , ';');
+        client.age = atoi(token.c_str());
+    }
+    return client;
+}
+
+//Funcion X4
+void writeCurrentClient(fstream& file, const Client& client) {
+    file << client.id << ';' << client.first_name << ';' << client.last_name << ';' << client.email << ';' << client.age << '\n';
+}
+
 // Función para leer datos desde el archivo CSV para la estructura Client
 void readClientsFromFile(const string& filename, Client clients[], int& size) {
     ifstream file(filename.c_str());
@@ -331,13 +381,86 @@ void updateSoldCar(Cars cars[], int& numCars, Client clients[], int& numClients)
     cout << "Car with ID " << soldCarId << " not found. No update performed." << endl;
 }
 
+// Función menu
 void displayMenu() {
     cout << "Menu:" << endl;
     cout << "1. Show Client Info" << endl;
     cout << "2. Register New Car" << endl;
     cout << "3. Update Car Status" << endl;
+    cout << "4. Get profit from car" << endl; // Planificandose todavia
+    cout << "5. Delete car or client" << endl;
     cout << "0. Exit" << endl;
     cout << "Enter your choice: ";
+}
+
+// Funcion para borrar carro o cliente
+void deleteItem(fstream& file , fstream& file2) {
+	int opcionElegida;
+	cout << "Seleccione opción"<<endl;
+	cout << "1. Carro ; 2. Cliente" <<endl;
+	cin >> opcionElegida; 
+	switch (opcionElegida) {
+		case 1: {
+	//carros 
+	int carIdToDelete;
+    cout << "Ingrese el ID del carro: ";
+    cin >> carIdToDelete;
+    
+    fstream tempFile("temp.csv", ios::out | ios::app); 
+
+    Cars currentCar;
+    while (!file.eof()) {
+        currentCar = readCurrentCar(file);
+        if (currentCar.id != carIdToDelete) {
+            writeCurrentCar(tempFile, currentCar);
+        }
+    }
+
+    file.clear();  
+    file.seekg(0, ios::beg);  
+
+    file.close();
+    tempFile.close();
+
+    remove("cars_data.csv");
+    rename("temp.csv", "cars_data.csv");
+
+    file.open("cars_data.csv", ios::in | ios::out | ios::app);
+    cout << "El Carro ha sido eliminado exitosamente" <<endl;
+		break; 
+}
+		case 2: {
+	//clientes
+	int clientIdToDelete;
+	cout << "Ingrese el ID del cliente: ";
+	cin >> clientIdToDelete;
+	
+	fstream tempFile("temp.csv", ios::out | ios::app);
+	
+	Client currentClient; 
+	while (!file2.eof()) {
+		currentClient = readCurrentClient(file2);
+		if (currentClient.id != clientIdToDelete) {
+			writeCurrentClient(tempFile, currentClient);
+		}
+	}
+	
+	file2.clear();
+	file2.seekg(0, ios::beg);
+	
+	file2.close();
+	tempFile.close();
+	
+	remove("clients.csv");
+	rename("temp.csv", "clients.csv");
+	
+	file2.open("clients.csv", ios::in | ios::out | ios::app);
+	cout << "El Cliente ha sido eliminado exitosamente" <<endl;
+		break;
+	}
+		default:
+		cout<< "Invalid choice" <<endl;
+	}
 }
 
 int main() {
@@ -352,7 +475,7 @@ int main() {
     // Read data from files
     readClientsFromFile(clientsFile, clients, numClients);
     fstream file("cars_data.csv", ios::in | ios::out | ios::app);
-
+	fstream file2("clients.csv", ios::in | ios::out | ios::app);
 
     int choice;
     int clientId;
@@ -371,6 +494,12 @@ int main() {
             	break;
             case 3:
             	updateSoldCar(cars, numCars, clients, numClients);
+            	break;
+            case 4:
+            //	getProfit(cars, numCars); Planificandose todavia 
+            	break;
+            case 5:
+            	deleteItem(file, file2);
             	break;
             case 0:
                 cout << "Exiting program. Goodbye!" << endl;
