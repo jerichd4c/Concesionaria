@@ -1,14 +1,17 @@
+//Librerias utilizadas
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <limits>
+#include <cstdlib>
 
 using namespace std;
 
-const int MAX_CLIENTS = 101;
-const int MAX_CARS = 1003;
+//Tamaño de arreglos
+const int MAX_CLIENTS = 121;
+const int MAX_CARS = 1021;
 
-// Estructura Client
+//Estructura Client
 struct Client {
     int id;
     string first_name;
@@ -17,7 +20,7 @@ struct Client {
     int age;
 };
 
-// Estructura Cars
+//Estructura Cars
 struct Cars {
     int id;
     string maker;
@@ -29,7 +32,7 @@ struct Cars {
     int bought_for;
 };
 
-// Funcion X1 
+//Función leer carros 
 Cars readCurrentCar(fstream& file) {
     Cars car;
     string line;
@@ -39,24 +42,35 @@ Cars readCurrentCar(fstream& file) {
 
         getline(iss, token, ';');
         car.id = atoi(token.c_str());
+
         getline(iss, car.maker, ';');
         getline(iss, car.model, ';');
+
+        getline(iss, token, ';');
         car.year = atoi(token.c_str());
+
+        getline(iss, token, ';');
         car.sold_to = atoi(token.c_str());
+
+        getline(iss, token, ';');
         car.bought_to = atoi(token.c_str());
+
+        getline(iss, token, ';');
         car.sold_for = atoi(token.c_str());
-    	car.bought_for = atoi(token.c_str());
+
+        getline(iss, token, ';');
+        car.bought_for = atoi(token.c_str());
     }
     return car;
 }
 
-//Funcion X2
+//Función escribir carros
 void writeCurrentCar(fstream& file, const Cars& car) {
     file << car.id << ';' << car.maker << ';' << car.model << ';'
          << car.year << ';' << car.sold_to << ';' << car.bought_to << ';' << car.sold_for << ';' << car.bought_for << '\n';
 }
 
-// Funcion X3
+//Función leer clientes
 Client readCurrentClient(fstream& file) {
     Client client;
     string line;
@@ -66,20 +80,23 @@ Client readCurrentClient(fstream& file) {
 
         getline(iss, token, ';');
         client.id = atoi(token.c_str());
+
         getline(iss, client.first_name , ';');
         getline(iss, client.last_name , ';');
         getline(iss, client.email , ';');
+
+        getline(iss, token, ';');
         client.age = atoi(token.c_str());
     }
     return client;
 }
 
-//Funcion X4
+//Función escribir clientes
 void writeCurrentClient(fstream& file, const Client& client) {
     file << client.id << ';' << client.first_name << ';' << client.last_name << ';' << client.email << ';' << client.age << '\n';
 }
 
-// Función para leer datos desde el archivo CSV para la estructura Client
+//Función para leer datos desde el archivo CSV para la estructura Client
 void readClientsFromFile(const string& filename, Client clients[], int& size) {
     ifstream file(filename.c_str());
 
@@ -107,7 +124,7 @@ void readClientsFromFile(const string& filename, Client clients[], int& size) {
     }
 }
 
-// Función para leer datos desde el archivo CSV para la estructura Cars
+//Función para leer datos desde el archivo CSV para la estructura Cars
 void readCarsFromFile(const string& filename, Cars cars[], int& size) {
     ifstream file(filename.c_str());
 
@@ -138,8 +155,9 @@ void readCarsFromFile(const string& filename, Cars cars[], int& size) {
     }
 }
 
+//Función mostrar carros de clientes 
 void displayClientCarsInfo(int clientId, const Client clients[], int numClients, const Cars cars[], int numCars) {
-    // Find the client with the given ID
+    //Encontrar el cliente con un ID
     int clientIndex = -1;
     for (int i = 0; i < numClients; ++i) {
         if (clients[i].id == clientId) {
@@ -149,21 +167,21 @@ void displayClientCarsInfo(int clientId, const Client clients[], int numClients,
     }
 
     if (clientIndex == -1) {
-        cout << "Client with ID " << clientId << " not found." << endl;
+        cout << "Cliente con ID " << clientId << " no encontrado." << endl;
         return;
     }
 
-    // Display client information
+    //Mostrar información del cliente
     cout << "ID: " << clients[clientIndex].id << endl;
-    cout << "Name: " << clients[clientIndex].first_name << " " << clients[clientIndex].last_name << endl;
+    cout << "Nombre: " << clients[clientIndex].first_name << " " << clients[clientIndex].last_name << endl;
     cout << "Email: " << clients[clientIndex].email << endl;
-    cout << "Age: " << clients[clientIndex].age << endl;
+    cout << "Edad: " << clients[clientIndex].age << endl;
 
-    // Count and display cars bought and sold by the client
+    //Contar y mostrar carros comprados y vendidos por el cliente
     int carsBought = 0;
     int carsSold = 0;
 
-    cout << "\nCars bought by the client: \n" << endl;
+    cout << "\nCarros comprados por el cliente: \n" << endl;
     for (int i = 0; i < numCars; ++i) {
         if (cars[i].bought_to == clientId) {
             carsBought++;
@@ -171,7 +189,7 @@ void displayClientCarsInfo(int clientId, const Client clients[], int numClients,
         }
     }
 
-    cout << "\nCars sold by the client: \n" << endl;
+    cout << "\nCars vendidos por el cliente: \n" << endl;
     for (int i = 0; i < numCars; ++i) {
         if (cars[i].sold_to == clientId) {
             carsSold++;
@@ -179,85 +197,114 @@ void displayClientCarsInfo(int clientId, const Client clients[], int numClients,
         }
     }
 
-    // Display the total count of cars bought and sold
+    //Mostrar el total de carros comprados y vendidos
     cout << "\n\n";
-    cout << "Total cars bought by the client: " << carsBought << endl;
-    cout << "Total cars sold by the client: " << carsSold << endl;
+    cout << "Total de carros comprados por el cliente: " << carsBought << endl;
+    cout << "Total de carros vendidos por el cliente: " << carsSold << endl;
     cout << "\n\n";
 }
 
+//Función para agregar clientes
 void addClient(Client clients[], int& numClients) {
-    // Take input for the new client's details
+    //Variable para nuevo cliente
     Client newClient;
-    // ... (Input details for the new client)
-
-    // Find the next available client ID
+    
+    //Encontrar ID disponible para cliente
     int nextClientId = numClients + 1;
 
-    // Update the new client's information
+    //Actualizar informacion del ID del cliente
     newClient.id = nextClientId;
-    // ... (Update other details if needed)
 
-    // Add the new client to the array
+	//Agregar informacion del cliente
+	cout<<"Introduzca el Nombre del cliente: "; 
+	cin>> newClient.first_name;
+	cout<<"Introduzca el Apellido del cliente: ";
+	cin>> newClient.last_name;
+	cout<<"Introduzca el email del cliente: ";
+	cin>> newClient.email;
+	cout<<"Introduzca la edad del cliente: ";
+	//Input validation
+	while (!(cin >> newClient.age) || newClient.age < 0 || newClient.age> 150) {
+        cout << "Dato invalido, introduzca una edad entre 0 y 150 años: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    //Se añade nuevo cliente al arreglo
     clients[numClients] = newClient;
     numClients++;
 
-    // Write the updated client data to the file
+    //Se agrega los nuevos datos del cliente al archivo
     ofstream clientsFile("clients.csv", ios::app);
     clientsFile << newClient.id << ';' << newClient.first_name << ';' << newClient.last_name << ';'
                 << newClient.email << ';' << newClient.age << endl;
     clientsFile.close();
 
-    cout << "Client information added successfully." << endl;
+    cout << "Información del cliente agregada exitosamente." << endl;
 }
 
+//Función para agregar carros nuevos
 void addBoughtCar(Cars cars[], int& numCars, Client clients[], int& numClients) {
-    // Take input for the new car's details
+    //Variable para carros nuevos
     Cars newCar;
 
-    cout << "Enter the details of the new car:" << endl;
+    cout << "Introduzca los detalles para el carro nuevo:" << endl;
 
-    // Maker input
+    //Introducir creador
     cout << "Maker: ";
-    cin.ignore(); // Ignore the newline character left in the stream
+    cin.ignore();
     getline(cin, newCar.maker);
 
-    // Model input
+    //Introducir model
     cout << "Model: ";
     getline(cin, newCar.model);
 
-    // Year input with validation
+    //Introducir year, si no existe tiene input validation
     cout << "Year: ";
     while (!(cin >> newCar.year) || newCar.year < 1900 || newCar.year > 2024) {
-        cout << "Invalid input. Please enter a valid year: ";
+        cout << "Dato invalido, introduzca un año entre 1900 y 2024: ";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
     
     cout << newCar.year;
     
-    // Bought_for input with validation
-    cout << "Enter the amount the car was bought for: ";
+    //Introducir Bought_for 
+    cout << "Introduzca por cuanto se compro el carro: ";
     while (!(cin >> newCar.bought_for) || newCar.bought_for <= 0) {
-        cout << "Invalid input. Please enter a valid amount: ";
+        cout << "Dato invalido, introduzca un valor numerico: ";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
     
     cout << newCar.bought_for;
+      
+	//Validar si el comprador existe
+        int isRegistered;
+        int buyerClientId;
+        cout << "Es el comprador un cliente registrado? (Si: 1, No: 0): ";
+        cin >> isRegistered;
 
-    // Bought_to value will be the clientId
-    int buyerClientId;
-    cout << "Enter the ID of the client who bought the car: ";
+        if (isRegistered == 0) {
+    //Si no esta registrado, se añade el cliente
+    addClient(clients, numClients);
+
+    //Se actualiza el carro con la nueva informacion del cliente ID
+    newCar.bought_to = numClients;
+
+    //Input validation
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+} else {
+    cout << "Introduzca el ID del cliente que compro el carro: ";
     while (!(cin >> buyerClientId) || buyerClientId <= 0) {
-        cout << "Invalid input. Please enter a valid client ID: ";
+        cout << "Opcion invalida, introduzca un ID valido: ";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
     
     cout << buyerClientId;
-
-    // Validate that the buyer client ID exists
+    
+    //Validar que el ID del comprador existe
     bool buyerExists = false;
     for (int i = 0; i < numClients; ++i) {
         if (clients[i].id == buyerClientId) {
@@ -267,27 +314,28 @@ void addBoughtCar(Cars cars[], int& numCars, Client clients[], int& numClients) 
     }
 
     if (!buyerExists) {
-        cout << "Client with ID " << buyerClientId << " not found. Car not added." << endl;
+        cout << "Cliente con ID: " << buyerClientId << " no encontrado, carro no agregado." << endl;
         return;
     }
+}
 
-// Update the new car's information
+//Actualizar informacion del carro nuevo
 newCar.id = numCars + 1;
 newCar.bought_to = buyerClientId;
-newCar.sold_to = 0; // No one has bought it yet
+newCar.sold_to = 0; //Nadie lo ha comprado todavia 
 newCar.sold_for = 0; 
 
-// Add the new car to the array
+//Se agrega el carro nuevo al arreglo
 cout << numCars;
 cars[numCars++] = newCar;
 
 cout << numCars;
 
 
-    // Write the updated car data to the file
+    //Escribir el carro actualizado al archivo
 	ofstream carsFile("cars_data.csv", ios::out | ios::app);
 	if (!carsFile) {
-	    cerr << "Error opening file for writing." << endl;
+	    cerr << "Error en abrir el archivo." << endl;
 	    return;
 	}
 	
@@ -295,7 +343,7 @@ cout << numCars;
 	         << newCar.sold_to << ';' << newCar.bought_to << ';' << newCar.sold_for << ';' << newCar.bought_for << endl;
 	
 	if (carsFile.fail()) {
-	    cerr << "Error writing data to file." << endl;
+	    cerr << "Error escribiendo los datos en el archivo." << endl;
 	    carsFile.close();
 	    return;
 	}
@@ -303,30 +351,31 @@ cout << numCars;
 carsFile.close();
 }
 
+//Función para actualizar carros vendidos
 void updateSoldCar(Cars cars[], int& numCars, Client clients[], int& numClients) {
-    // Take input for the car's ID that was sold
+    //Variable para el precio de venta del carro
     int soldCarId;
-    cout << "Enter the ID of the car that was sold: ";
+    cout << "Introduzca el ID del carro que fue vendido: ";
     cin >> soldCarId;
 
-    // Find the car in the array
+    //Encontrar el carro en el arreglo
     for (int i = 0; i < numCars; ++i) {
         if (cars[i].id == soldCarId) {
-            // Check if the buyer is registered
+            //Preguntar si el comprador es un ID registrado
             int isRegistered;
-            cout << "Is the buyer a registered user? (Yes: 1, No: 0): ";
+            cout << "Es el comprador un usuario registrado? (Si: 1, No: 0): ";
             cin >> isRegistered;
 
             if (isRegistered == 0) {
-                // If the buyer is not a registered user, register a new client
+                //Si no esta registrado, se registra
                 addClient(clients, numClients);
 
-                // Update the car's information with the new client's ID
+                //Actualizar informacion del carro con el ID del nuevo cliente
                 cars[i].sold_to = numClients;
             } else {
-                // If the buyer is registered, ask for the client's ID
+                //Si esta registrado, preguntar por el ID
                 int buyerClientId;
-                cout << "Enter the ID of the client who bought the car: ";
+                cout << "Introduzca el ID del usuario que compro el carro: ";
                 cin >> buyerClientId;
 
                 // Validate that the buyer client ID exists
@@ -339,29 +388,29 @@ void updateSoldCar(Cars cars[], int& numCars, Client clients[], int& numClients)
                 }
 
                 if (!buyerExists) {
-                    cout << "Client with ID " << buyerClientId << " not found. Car not added." << endl;
+                    cout << "Cliente con ID " << buyerClientId << " no encontrado, carro no agregado." << endl;
                     return;
                 }
 
-                // Update the car's information with the buyer's client ID
+                //Actualizar informacion con el ID del comprador
                 cars[i].sold_to = buyerClientId;
             }
 
-            // Input validation for the amount it was sold
-            cout << "Enter the amount the car was sold for: ";
+            // Input validation para el precio
+            cout << "Introduzca por cuanto fue vendido el carro: ";
             while (!(cin >> cars[i].sold_for) || cars[i].sold_for <= 0) {
                 cout << "Invalid input. Please enter a valid amount: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
 
-            // Confirm with the user
+            // Confirmar con el usuario
             int confirm;
-            cout << "Confirm the sale? (Yes: 1, No: 0): ";
+            cout << "Confirmar la venta? (Si: 1, No: 0): ";
             cin >> confirm;
 
             if (confirm == 1) {
-                // Write the updated car data to the file
+                //Escribir los datos del carro en el archivo
                 ofstream carsFile("cars_data.csv");
                 for (int j = 0; j < numCars; ++j) {
                     carsFile << cars[j].id << ';' << cars[j].maker << ';' << cars[j].model << ';' << cars[j].year << ';'
@@ -369,31 +418,57 @@ void updateSoldCar(Cars cars[], int& numCars, Client clients[], int& numClients)
                 }
                 carsFile.close();
 
-                cout << "Car information updated successfully." << endl;
+                cout << "Informacion del carro agregado exitosamente." << endl;
             } else {
-                cout << "Sale canceled. Car information not updated." << endl;
+                cout << "Venta cancelada, informacion del carro no fue actualizada." << endl;
             }
 
             return;
         }
     }
 
-    cout << "Car with ID " << soldCarId << " not found. No update performed." << endl;
+    cout << "Carro con ID " << soldCarId << " no fue encontrado, no se realizo ninguna actualizacion." << endl;
 }
 
-// Función menu
+//Función menu
 void displayMenu() {
     cout << "Menu:" << endl;
-    cout << "1. Show Client Info" << endl;
-    cout << "2. Register New Car" << endl;
-    cout << "3. Update Car Status" << endl;
-    cout << "4. Get profit from car" << endl; // Planificandose todavia
-    cout << "5. Delete car or client" << endl;
-    cout << "0. Exit" << endl;
-    cout << "Enter your choice: ";
+    cout << "1. Mostrar informacion del cliente" << endl;
+    cout << "2. Registrar carro nuevo" << endl;
+    cout << "3. Actualizar informacion del carro" << endl;
+    cout << "4. Sacar ganancias de un carro" << endl;
+    cout << "5. Borrar carro o cliente" << endl;
+    cout << "0. Salir del programa" << endl;
+    cout << "Opción: ";
 }
 
-// Funcion para borrar carro o cliente
+//Función para sacar las perdidas y ganancias de carros 
+void getProfit(const Cars cars[], int size) {
+	int carId;
+	cout <<"Seleccione el ID del carro: ";
+	cin >>carId;	
+	
+	bool found = false;
+    for (int i = 0; i < size; ++i) {
+        if (cars[i].id == carId) {
+            found = true; 
+    		int diferenciaCarro= cars[i].bought_for-cars[i].sold_for; 
+    		if (diferenciaCarro>0) {
+    			cout<<"La ganancia fue de: " <<diferenciaCarro<< "$"<<endl;
+			} else if (diferenciaCarro<0) {
+				cout<<"La perdida fue de: " <<diferenciaCarro*-1<< "$"<<endl;
+			} else { 
+			cout<<"No hubo ni ganancia ni perdida"<<endl;
+			}
+		}
+	}
+
+	if (!found) {
+        cout << "Cliente con ID " << carId << " no encontrado." << endl;
+	}
+}
+
+//Función para borrar carro o cliente
 void deleteItem(fstream& file , fstream& file2) {
 	int opcionElegida;
 	cout << "Seleccione opción"<<endl;
@@ -426,7 +501,6 @@ void deleteItem(fstream& file , fstream& file2) {
     rename("temp.csv", "cars_data.csv");
 
     file.open("cars_data.csv", ios::in | ios::out | ios::app);
-    cout << "El Carro ha sido eliminado exitosamente" <<endl;
 		break; 
 }
 		case 2: {
@@ -455,14 +529,14 @@ void deleteItem(fstream& file , fstream& file2) {
 	rename("temp.csv", "clients.csv");
 	
 	file2.open("clients.csv", ios::in | ios::out | ios::app);
-	cout << "El Cliente ha sido eliminado exitosamente" <<endl;
 		break;
 	}
 		default:
-		cout<< "Invalid choice" <<endl;
+		cout<< "Opcion invalida" <<endl;
 	}
 }
 
+//Implementación
 int main() {
     const string clientsFile = "clients.csv";
     const string carsFile = "cars_data.csv";
@@ -472,8 +546,10 @@ int main() {
     int numClients = 0;
     int numCars = 0;
 
-    // Read data from files
+    //Leer datos para un archivo
     readClientsFromFile(clientsFile, clients, numClients);
+    readCarsFromFile(carsFile, cars, numCars);
+    
     fstream file("cars_data.csv", ios::in | ios::out | ios::app);
 	fstream file2("clients.csv", ios::in | ios::out | ios::app);
 
@@ -485,7 +561,7 @@ int main() {
 
         switch (choice) {
             case 1:
-                cout << "Enter the ID of the client: ";
+                cout << "Introduzca ID del cliente: ";
                 cin >> clientId;
                 displayClientCarsInfo(clientId, clients, numClients, cars, numCars);
                 break;
@@ -496,16 +572,16 @@ int main() {
             	updateSoldCar(cars, numCars, clients, numClients);
             	break;
             case 4:
-            //	getProfit(cars, numCars); Planificandose todavia 
+            	getProfit(cars, numCars);
             	break;
             case 5:
             	deleteItem(file, file2);
             	break;
             case 0:
-                cout << "Exiting program. Goodbye!" << endl;
+                cout << "Saliendo del programa..." << endl;
                 break;
             default:
-                cout << "Invalid choice. Please try again." << endl;
+                cout << "Opcion invalida, intente nuevamente." << endl;
         }
     } while (choice != 0);
 

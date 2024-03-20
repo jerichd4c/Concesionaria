@@ -1,4 +1,4 @@
-id;maker;model;year;sold_to;bought_to;sold_for;bought_for
+0;;;0;0;0;0;0
 1;Dodge;Nitro;2011;14;63;16416;5456
 2;Mitsubishi;Endeavor;2006;46;72;24761;953
 3;Chevrolet;TrailBlazer;2006;43;53;29194;7977
@@ -8,7 +8,7 @@ id;maker;model;year;sold_to;bought_to;sold_for;bought_for
 7;Honda;S2000;2002;65;28;6394;3036
 8;Scion;xD;2011;8;75;2184;7279
 9;Jaguar;S-Type;2002;20;65;25422;6835
-10;Volkswagen;Touareg 2;2008;43;5;15838;5189
+10;Volkswagen;Touareg 2;2008;102;5;2000;5189
 11;Nissan;NX;1993;54;51;16172;6230
 12;Pontiac;G8;2009;22;53;7495;8030
 13;Aston Martin;DB9;2007;47;90;9212;7707
