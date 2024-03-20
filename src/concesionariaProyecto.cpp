@@ -8,8 +8,8 @@
 using namespace std;
 
 //Tamaño de arreglos
-const int MAX_CLIENTS = 121;
-const int MAX_CARS = 1021;
+const int MAX_CLIENTS = 150;
+const int MAX_CARS = 1050;
 
 //Estructura Client
 struct Client {
@@ -235,7 +235,7 @@ void addClient(Client clients[], int& numClients) {
     numClients++;
 
     //Se agrega los nuevos datos del cliente al archivo
-    ofstream clientsFile("clients.csv", ios::app);
+    ofstream clientsFile("../assets/clients.csv", ios::app);
     clientsFile << newClient.id << ';' << newClient.first_name << ';' << newClient.last_name << ';'
                 << newClient.email << ';' << newClient.age << endl;
     clientsFile.close();
@@ -267,8 +267,6 @@ void addBoughtCar(Cars cars[], int& numCars, Client clients[], int& numClients) 
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
     
-    cout << newCar.year;
-    
     //Introducir Bought_for 
     cout << "Introduzca por cuanto se compro el carro: ";
     while (!(cin >> newCar.bought_for) || newCar.bought_for <= 0) {
@@ -276,33 +274,32 @@ void addBoughtCar(Cars cars[], int& numCars, Client clients[], int& numClients) 
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
-    
-    cout << newCar.bought_for;
       
 	//Validar si el comprador existe
         int isRegistered;
         int buyerClientId;
         cout << "Es el comprador un cliente registrado? (Si: 1, No: 0): ";
-        cin >> isRegistered;
-
+	while (!(cin >> isRegistered) || isRegistered < 0 || isRegistered > 1 ) {
+        cout << "Opcion invalida, introduzca 1 o 0: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
         if (isRegistered == 0) {
     //Si no esta registrado, se añade el cliente
     addClient(clients, numClients);
-
+	
     //Se actualiza el carro con la nueva informacion del cliente ID
     newCar.bought_to = numClients;
 
     //Input validation
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-} else {
+	} else {
     cout << "Introduzca el ID del cliente que compro el carro: ";
     while (!(cin >> buyerClientId) || buyerClientId <= 0) {
         cout << "Opcion invalida, introduzca un ID valido: ";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
-    
-    cout << buyerClientId;
     
     //Validar que el ID del comprador existe
     bool buyerExists = false;
@@ -320,20 +317,17 @@ void addBoughtCar(Cars cars[], int& numCars, Client clients[], int& numClients) 
 }
 
 //Actualizar informacion del carro nuevo
-newCar.id = numCars + 1;
-newCar.bought_to = buyerClientId;
-newCar.sold_to = 0; //Nadie lo ha comprado todavia 
-newCar.sold_for = 0; 
+	newCar.id = numCars + 1;
+	newCar.bought_to = buyerClientId;
+	newCar.sold_to = 0; //Nadie lo ha comprado todavia 
+	newCar.sold_for = 0; 
 
 //Se agrega el carro nuevo al arreglo
 cout << numCars;
 cars[numCars++] = newCar;
 
-cout << numCars;
-
-
     //Escribir el carro actualizado al archivo
-	ofstream carsFile("cars_data.csv", ios::out | ios::app);
+	ofstream carsFile("../assets/cars_data.csv", ios::out | ios::app);
 	if (!carsFile) {
 	    cerr << "Error en abrir el archivo." << endl;
 	    return;
@@ -347,8 +341,8 @@ cout << numCars;
 	    carsFile.close();
 	    return;
 	}
-
-carsFile.close();
+	cout<< "Carro agregado exitosamente" <<endl;
+	carsFile.close();
 }
 
 //Función para actualizar carros vendidos
@@ -399,7 +393,7 @@ void updateSoldCar(Cars cars[], int& numCars, Client clients[], int& numClients)
             // Input validation para el precio
             cout << "Introduzca por cuanto fue vendido el carro: ";
             while (!(cin >> cars[i].sold_for) || cars[i].sold_for <= 0) {
-                cout << "Invalid input. Please enter a valid amount: ";
+                cout << "Valor invalido, introduzca un valor valido: ";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
@@ -411,7 +405,7 @@ void updateSoldCar(Cars cars[], int& numCars, Client clients[], int& numClients)
 
             if (confirm == 1) {
                 //Escribir los datos del carro en el archivo
-                ofstream carsFile("cars_data.csv");
+                ofstream carsFile("../assets/cars_data.csv");
                 for (int j = 0; j < numCars; ++j) {
                     carsFile << cars[j].id << ';' << cars[j].maker << ';' << cars[j].model << ';' << cars[j].year << ';'
                              << cars[j].sold_to << ';' << cars[j].bought_to << ';' << cars[j].sold_for << ';' << cars[j].bought_for << endl;
@@ -445,14 +439,19 @@ void displayMenu() {
 //Función para sacar las perdidas y ganancias de carros 
 void getProfit(const Cars cars[], int size) {
 	int carId;
-	cout <<"Seleccione el ID del carro: ";
-	cin >>carId;	
-	
+	cout <<"Seleccione el ID del carro: ";	
+	while (!(cin >> carId) || carId <= 0) {
+        			cout << "Dato invalido, introduzca un valor numerico mayor a 0: ";
+        			cin.clear();
+        			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    			}
 	bool found = false;
     for (int i = 0; i < size; ++i) {
         if (cars[i].id == carId) {
             found = true; 
-    		int diferenciaCarro= cars[i].bought_for-cars[i].sold_for; 
+    		int diferenciaCarro= cars[i].bought_for-cars[i].sold_for;
+    		cout<<"el carro se compro por: "<<cars[i].bought_for<<endl;
+    		cout<<"el carro se vendio por: "<<cars[i].sold_for<<endl;
     		if (diferenciaCarro>0) {
     			cout<<"La ganancia fue de: " <<diferenciaCarro<< "$"<<endl;
 			} else if (diferenciaCarro<0) {
@@ -464,12 +463,12 @@ void getProfit(const Cars cars[], int size) {
 	}
 
 	if (!found) {
-        cout << "Cliente con ID " << carId << " no encontrado." << endl;
+        cout << "Carro con ID " << carId << " no encontrado." << endl;
 	}
 }
 
 //Función para borrar carro o cliente
-void deleteItem(fstream& file , fstream& file2) {
+void deleteItem(fstream& file , fstream& file2, int numClients, int numCars, const Cars cars[], const Client clients[]) {
 	int opcionElegida;
 	cout << "Seleccione opción"<<endl;
 	cout << "1. Carro ; 2. Cliente" <<endl;
@@ -479,10 +478,26 @@ void deleteItem(fstream& file , fstream& file2) {
 	//carros 
 	int carIdToDelete;
     cout << "Ingrese el ID del carro: ";
-    cin >> carIdToDelete;
-    
-    fstream tempFile("temp.csv", ios::out | ios::app); 
+    while (!(cin >> carIdToDelete) || carIdToDelete <= 0) {
+        cout << "Dato invalido, introduzca un valor numerico y sea diferente de 0: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+	//input validation
+    int carsIndex = -1;
+    for (int i = 0; i < numCars; ++i) {
+        if (cars[i].id == carIdToDelete) {
+            carsIndex = i;
+            break;
+        }
+    }
 
+    if (carsIndex == -1) {
+        cout << "Carro con ID " << carIdToDelete << " no encontrado." << endl;
+        return;
+    }
+    
+    fstream tempFile("../assets/temp.csv", ios::out | ios::app); 
     Cars currentCar;
     while (!file.eof()) {
         currentCar = readCurrentCar(file);
@@ -497,19 +512,37 @@ void deleteItem(fstream& file , fstream& file2) {
     file.close();
     tempFile.close();
 
-    remove("cars_data.csv");
-    rename("temp.csv", "cars_data.csv");
+    remove("../assets/cars_data.csv");
+    rename("../assets/temp.csv", "../assets/cars_data.csv");
 
-    file.open("cars_data.csv", ios::in | ios::out | ios::app);
+    file.open("cars_data.csv", ios::in | ios::out | ios::app); 
+    cout<<"Carro eliminado exitosamente."<<endl;
 		break; 
 }
 		case 2: {
 	//clientes
 	int clientIdToDelete;
 	cout << "Ingrese el ID del cliente: ";
-	cin >> clientIdToDelete;
-	
-	fstream tempFile("temp.csv", ios::out | ios::app);
+	while (!(cin >> clientIdToDelete) || clientIdToDelete <= 0) {
+        cout << "Dato invalido, introduzca un valor numerico y sea diferente de 0: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+	//input validation
+	int clientIndex = -1;
+    for (int i = 0; i < numClients; ++i) {
+        if (clients[i].id == clientIdToDelete) {
+            clientIndex = i;
+            break;
+        }
+    }
+
+    if (clientIndex == -1) {
+        cout << "Cliente con ID " << clientIdToDelete << " no encontrado." << endl;
+        return;
+    }
+    
+	fstream tempFile("../assets/temp.csv", ios::out | ios::app);
 	
 	Client currentClient; 
 	while (!file2.eof()) {
@@ -525,10 +558,11 @@ void deleteItem(fstream& file , fstream& file2) {
 	file2.close();
 	tempFile.close();
 	
-	remove("clients.csv");
-	rename("temp.csv", "clients.csv");
+	remove("../assets/clients.csv");
+	rename("../assets/temp.csv", "../assets/clients.csv");
 	
 	file2.open("clients.csv", ios::in | ios::out | ios::app);
+	cout<<"Cliente eliminado exitosamente."<<endl;
 		break;
 	}
 		default:
@@ -538,8 +572,8 @@ void deleteItem(fstream& file , fstream& file2) {
 
 //Implementación
 int main() {
-    const string clientsFile = "clients.csv";
-    const string carsFile = "cars_data.csv";
+    const string clientsFile = "../assets/clients.csv";
+    const string carsFile = "../assets/cars_data.csv";
 
     Client clients[MAX_CLIENTS];
     Cars cars[MAX_CARS];
@@ -550,19 +584,26 @@ int main() {
     readClientsFromFile(clientsFile, clients, numClients);
     readCarsFromFile(carsFile, cars, numCars);
     
-    fstream file("cars_data.csv", ios::in | ios::out | ios::app);
-	fstream file2("clients.csv", ios::in | ios::out | ios::app);
+    fstream file("../assets/cars_data.csv", ios::in | ios::out | ios::app);
+	fstream file2("../assets/clients.csv", ios::in | ios::out | ios::app);
 
     int choice;
     int clientId;
     do {
         displayMenu();
-        cin >> choice;
-
+        while (!(cin >> choice) || choice < 0) {
+        cout << "Dato invalido, introduzca un valor numerico: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
         switch (choice) {
             case 1:
                 cout << "Introduzca ID del cliente: ";
-                cin >> clientId;
+                while (!(cin >> clientId) || clientId <= 0) {
+        			cout << "Dato invalido, introduzca un valor numerico: ";
+        			cin.clear();
+        			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    			}
                 displayClientCarsInfo(clientId, clients, numClients, cars, numCars);
                 break;
             case 2:
@@ -575,7 +616,7 @@ int main() {
             	getProfit(cars, numCars);
             	break;
             case 5:
-            	deleteItem(file, file2);
+            	deleteItem(file, file2, numClients, numCars,cars, clients);
             	break;
             case 0:
                 cout << "Saliendo del programa..." << endl;
