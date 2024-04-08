@@ -11,6 +11,8 @@ int main() {
     int numClients = 0;
     int numCars = 0;
     
+	readClientsFromFile(clientsFile, clients, numClients);
+    readCarsFromFile(carsFile, cars, numCars);
     std::fstream file("../assets/cars_data.csv", std::ios::in | std::ios::out | std::ios::app);
     std::fstream file2("../assets/clients.csv", std::ios::in | std::ios::out | std::ios::app);
 

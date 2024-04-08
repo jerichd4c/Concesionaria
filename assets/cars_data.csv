@@ -1,4 +1,4 @@
-0;maker;model;0;0;0;0;0
+id;maker;model;year;sold_to;bought_to;sold_for;bought_for
 1;Dodge;Nitro;2011;14;63;16416;5456
 2;Mitsubishi;Endeavor;2006;46;72;24761;953
 3;Chevrolet;TrailBlazer;2006;43;53;29194;7977
