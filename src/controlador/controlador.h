@@ -2,6 +2,7 @@
 #define CONTROLADOR_H
 
 #include "../modelo/modelo.h"
+#include <fstream> // Se añade esta inclusión para el uso de std::fstream
 
 void addClient(Client clients[], int& numClients);
 void addBoughtCar(Cars cars[], int& numCars, Client clients[], int& numClients);

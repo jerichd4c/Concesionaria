@@ -8,32 +8,42 @@ Cars readCurrentCar(std::fstream& file) {
         std::string token;
 
         std::getline(iss, token, ';');
-        car.id = std::atoi(token.c_str());
+        car.setId(std::atoi(token.c_str()));
 
-        std::getline(iss, car.maker, ';');
-        std::getline(iss, car.model, ';');
-
+        // Leer el fabricante y establecerlo en el carro
         std::getline(iss, token, ';');
-        car.year = std::atoi(token.c_str());
+        car.setMaker(token);
 
+        // Leer el modelo y establecerlo en el carro
         std::getline(iss, token, ';');
-        car.sold_to = std::atoi(token.c_str());
+        car.setModel(token);
 
+        // Leer el año y establecerlo en el carro
         std::getline(iss, token, ';');
-        car.bought_to = std::atoi(token.c_str());
+        car.setYear(std::atoi(token.c_str()));
 
+        // Leer el ID del cliente al que se vendió y establecerlo en el carro
         std::getline(iss, token, ';');
-        car.sold_for = std::atoi(token.c_str());
+        car.setSoldTo(std::atoi(token.c_str()));
 
+        // Leer el ID del cliente que lo compró y establecerlo en el carro
         std::getline(iss, token, ';');
-        car.bought_for = std::atoi(token.c_str());
+        car.setBoughtTo(std::atoi(token.c_str()));
+
+        // Leer el precio de venta y establecerlo en el carro
+        std::getline(iss, token, ';');
+        car.setSoldFor(std::atoi(token.c_str()));
+
+        // Leer el precio de compra y establecerlo en el carro
+        std::getline(iss, token, ';');
+        car.setBoughtFor(std::atoi(token.c_str()));
     }
     return car;
 }
 
 void writeCurrentCar(std::fstream& file, const Cars& car) {
-    file << car.id << ';' << car.maker << ';' << car.model << ';'
-         << car.year << ';' << car.sold_to << ';' << car.bought_to << ';' << car.sold_for << ';' << car.bought_for << '\n';
+    file << car.getId() << ';' << car.getMaker() << ';' << car.getModel() << ';'
+         << car.getYear() << ';' << car.getSoldTo() << ';' << car.getBoughtTo() << ';' << car.getSoldFor() << ';' << car.getBoughtFor() << '\n';
 }
 
 Client readCurrentClient(std::fstream& file) {
@@ -44,20 +54,29 @@ Client readCurrentClient(std::fstream& file) {
         std::string token;
 
         std::getline(iss, token, ';');
-        client.id = std::atoi(token.c_str());
+        client.setId(std::atoi(token.c_str()));
 
-        std::getline(iss, client.first_name , ';');
-        std::getline(iss, client.last_name , ';');
-        std::getline(iss, client.email , ';');
-
+        // Leer el primer nombre y establecerlo en el cliente
         std::getline(iss, token, ';');
-        client.age = std::atoi(token.c_str());
+        client.setFirstName(token);
+
+        // Leer el apellido y establecerlo en el cliente
+        std::getline(iss, token, ';');
+        client.setLastName(token);
+
+        // Leer el correo electrónico y establecerlo en el cliente
+        std::getline(iss, token, ';');
+        client.setEmail(token);
+
+        // Leer la edad y establecerla en el cliente
+        std::getline(iss, token, ';');
+        client.setAge(std::atoi(token.c_str()));
     }
     return client;
 }
 
 void writeCurrentClient(std::fstream& file, const Client& client) {
-    file << client.id << ';' << client.first_name << ';' << client.last_name << ';' << client.email << ';' << client.age << '\n';
+    file << client.getId() << ';' << client.getFirstName() << ';' << client.getLastName() << ';' << client.getEmail() << ';' << client.getAge() << '\n';
 }
 
 void readClientsFromFile(const std::string& filename, Client clients[], int& size) {
@@ -72,11 +91,21 @@ void readClientsFromFile(const std::string& filename, Client clients[], int& siz
             char delimiter = ';';
 
             // Se leen los datos desde el archivo CSV
-            iss >> clients[size].id >> delimiter;
-            std::getline(iss, clients[size].first_name, delimiter);
-            std::getline(iss, clients[size].last_name, delimiter);
-            std::getline(iss, clients[size].email, delimiter);
-            iss >> clients[size].age;
+            int id;
+            std::string firstName, lastName, email;
+            int age;
+
+            iss >> id >> delimiter;
+            std::getline(iss, firstName, delimiter);
+            std::getline(iss, lastName, delimiter);
+            std::getline(iss, email, delimiter);
+            iss >> age;
+
+            clients[size].setId(id);
+            clients[size].setFirstName(firstName);
+            clients[size].setLastName(lastName);
+            clients[size].setEmail(email);
+            clients[size].setAge(age);
 
             size++;
         }
@@ -98,15 +127,27 @@ void readCarsFromFile(const std::string& filename, Cars cars[], int& size) {
             std::istringstream iss(line);
             char delimiter = ';';
 
-            // Leemos los datos desde el archivo CSV
-            iss >> cars[size].id >> delimiter;
-            std::getline(iss, cars[size].maker, delimiter);
-            std::getline(iss, cars[size].model, delimiter);
-            iss >> cars[size].year >> delimiter;
-            iss >> cars[size].sold_to >> delimiter;
-            iss >> cars[size].bought_to >> delimiter;
-            iss >> cars[size].sold_for >> delimiter;
-            iss >> cars[size].bought_for;
+            // Leer los datos desde el archivo CSV
+            int id, year, soldTo, boughtTo, soldFor, boughtFor;
+            std::string maker, model;
+
+            iss >> id >> delimiter;
+            std::getline(iss, maker, delimiter);
+            std::getline(iss, model, delimiter);
+            iss >> year >> delimiter;
+            iss >> soldTo >> delimiter;
+            iss >> boughtTo >> delimiter;
+            iss >> soldFor >> delimiter;
+            iss >> boughtFor;
+
+            cars[size].setId(id);
+            cars[size].setMaker(maker);
+            cars[size].setModel(model);
+            cars[size].setYear(year);
+            cars[size].setSoldTo(soldTo);
+            cars[size].setBoughtTo(boughtTo);
+            cars[size].setSoldFor(soldFor);
+            cars[size].setBoughtFor(boughtFor);
 
             size++;
         }

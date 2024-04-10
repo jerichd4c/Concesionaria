@@ -1,18 +1,21 @@
 #include "./modelo/modelo.h"
 #include "./vista/vista.h"
 #include "./controlador/controlador.h"
-using namespace std;
+#include <iostream>
+#include <limits>
 
 int main() {
     const std::string clientsFile = "../assets/clients.csv";
     const std::string carsFile = "../assets/cars_data.csv";
- 	Client clients[MAX_CLIENTS];
+    Client clients[MAX_CLIENTS];
     Cars cars[MAX_CARS];
     int numClients = 0;
     int numCars = 0;
-    
-	readClientsFromFile(clientsFile, clients, numClients);
+
+    // Leer datos desde los archivos
+    readClientsFromFile(clientsFile, clients, numClients);
     readCarsFromFile(carsFile, cars, numCars);
+
     std::fstream file("../assets/cars_data.csv", std::ios::in | std::ios::out | std::ios::app);
     std::fstream file2("../assets/clients.csv", std::ios::in | std::ios::out | std::ios::app);
 
@@ -20,11 +23,14 @@ int main() {
     int clientId;
     do {
         displayMenu();
+
+        // Manejo de entrada inválida
         while (!(std::cin >> choice) || choice < 0) {
             std::cout << "Dato invalido, introduzca un valor numerico: ";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
+
         switch (choice) {
             case 1:
                 std::cout << "Introduzca ID del cliente: ";
