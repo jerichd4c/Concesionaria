@@ -22,8 +22,6 @@ public:
     void setEmail(const std::string& newEmail) { email = newEmail; }
     int getAge() const { return age; }
     void setAge(int newAge) { age = newAge; }
-
-private:
     int id;
     std::string first_name;
     std::string last_name;
@@ -62,7 +60,7 @@ private:
 };
 
 void writeCurrentCar(std::fstream& file, const Cars& car);
-void writeCurrentClient(std::fstream& file, const Client& client);
+void writeCurrentClient(std::fstream& file, const Client& client, bool isFirstLine);
 void readClientsFromFile(const std::string& filename, Client clients[], int& size);
 void readCarsFromFile(const std::string& filename, Cars cars[], int& size);
 void readCurrentCar(std::fstream& file);

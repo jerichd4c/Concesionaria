@@ -13,6 +13,7 @@ void displayMenu() {
 }
 
 void displayClientCarsInfo(int clientId, const Client clients[], int numClients, const Cars cars[], int numCars) {
+	
     // Encontrar el cliente con un ID
     int clientIndex = -1;
     for (int i = 0; i < numClients; ++i) {

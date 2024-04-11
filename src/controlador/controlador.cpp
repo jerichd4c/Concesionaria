@@ -8,7 +8,9 @@ void addClient(Client clients[], int& numClients) {
 
         std::cout << "Introduzca el nombre del cliente: ";
         std::string firstName, lastName;
-        std::cin >> firstName >> lastName;
+        std::cin >> firstName;
+        std::cout << "Introduzca el apellido del cliente: ";  
+        std::cin >> lastName;  
         newClient.setFirstName(firstName);
         newClient.setLastName(lastName);
 
@@ -30,7 +32,7 @@ void addClient(Client clients[], int& numClients) {
         clients[numClients] = newClient;
         numClients++;
 
-        // Escribir el nuevo cliente en el archivo (esto debería manejarse en el modelo)
+        // Escribir el nuevo cliente en el archivo 
         std::ofstream file("../assets/clients.csv", std::ios::out | std::ios::app);
         if (file.is_open()) {
             file << newClient.getId() << ';' << newClient.getFirstName() << ';' << newClient.getLastName() << ';'
@@ -47,6 +49,8 @@ void addClient(Client clients[], int& numClients) {
 
 void addBoughtCar(Cars cars[], int& numCars, Client clients[], int& numClients) {
     Cars newCar;
+
+    std::cout << std::endl; // Salto de línea para separar visualmente el mensaje del encabezado
 
     std::cout << "Introduzca los detalles para el carro nuevo:" << std::endl;
 
@@ -70,7 +74,7 @@ void addBoughtCar(Cars cars[], int& numCars, Client clients[], int& numClients) 
 	}
 	newCar.setYear(year);
 
-    std::cout << "Introduzca por cuanto se compro el carro: ";
+    std::cout << "Introduzca por cuanto se compró el carro: ";
    	int boughtFor;
 	while (!(std::cin >> boughtFor) || boughtFor <= 0) {
     	std::cout << "Dato inválido, introduzca un valor numérico mayor a cero: ";
@@ -82,7 +86,7 @@ void addBoughtCar(Cars cars[], int& numCars, Client clients[], int& numClients) 
     int isRegistered;
     std::cout << "Es el comprador un cliente registrado? (Si: 1, No: 0): ";
     while (!(std::cin >> isRegistered) || isRegistered < 0 || isRegistered > 1 ) {
-        std::cout << "Opcion invalida, introduzca 1 o 0: ";
+        std::cout << "Opción inválida, introduzca 1 o 0: ";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
@@ -96,9 +100,9 @@ void addBoughtCar(Cars cars[], int& numCars, Client clients[], int& numClients) 
     } else {
         // Si el comprador está registrado, solicitar su ID
         int buyerClientId;
-        std::cout << "Introduzca el ID del cliente que compro el carro: ";
+        std::cout << "Introduzca el ID del cliente que compró el carro: ";
         while (!(std::cin >> buyerClientId) || buyerClientId <= 0) {
-            std::cout << "Opcion invalida, introduzca un ID valido: ";
+            std::cout << "ID inválido, introduzca un ID válido: ";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
@@ -120,35 +124,46 @@ void addBoughtCar(Cars cars[], int& numCars, Client clients[], int& numClients) 
         newCar.setBoughtTo(buyerClientId);
     }
 
-    // Agregar el nuevo carro al arreglo
-    cars[numCars] = newCar;
-    numCars++;
+   	// Agregar el nuevo carro al arreglo
+	cars[numCars] = newCar;
+	numCars++;
+
+	// Escribir el nuevo carro en el archivo (esto debería manejarse en el modelo)
+	std::ofstream file("../assets/cars_data.csv", std::ios::out | std::ios::app);
+	if (file.is_open()) {
+    	file << newCar.getId() << ';' << newCar.getMaker() << ';' << newCar.getModel() << ';'
+     	   << newCar.getYear() << ';' << newCar.getSoldTo() << ';' << newCar.getBoughtTo() << ';'
+     	   << newCar.getSoldFor() << ';' << newCar.getBoughtFor() << std::endl;
+    	file.close();
+   	 std::cout << "Carro agregado exitosamente." << std::endl;
+	} else {
+ 	   std::cerr << "Error al abrir el archivo." << std::endl;
+	}
 }
 
 void updateSoldCar(Cars cars[], int& numCars, Client clients[], int& numClients) {
-    //Variable para el precio de venta del carro
+    // Variable para el ID del carro vendido
     int soldCarId;
     std::cout << "Introduzca el ID del carro que fue vendido: ";
     std::cin >> soldCarId;
 
-    //Encontrar el carro en el arreglo
+    // Buscar el carro en el arreglo
     for (int i = 0; i < numCars; ++i) {
         if (cars[i].getId() == soldCarId) {
-            //Preguntar si el comprador es un ID registrado
+            // Preguntar si el comprador es un usuario registrado
             int isRegistered;
-            std::cout << "Es el comprador un usuario registrado? (Si: 1, No: 0): ";
+            std::cout << "¿Es el comprador un usuario registrado? (Si: 1, No: 0): ";
             std::cin >> isRegistered;
 
             if (isRegistered == 0) {
-                //Si no esta registrado, se registra
+                // Si el comprador no está registrado, agregarlo como nuevo cliente
                 addClient(clients, numClients);
-
-                //Actualizar informacion del carro con el ID del nuevo cliente
+                // Actualizar la información del carro con el ID del nuevo cliente
                 cars[i].setSoldTo(numClients);
             } else {
-                //Si esta registrado, preguntar por el ID
+                // Si el comprador está registrado, preguntar por su ID
                 int buyerClientId;
-                std::cout << "Introduzca el ID del usuario que compro el carro: ";
+                std::cout << "Introduzca el ID del usuario que compró el carro: ";
                 std::cin >> buyerClientId;
 
                 // Validar que el ID del comprador existe
@@ -161,52 +176,65 @@ void updateSoldCar(Cars cars[], int& numCars, Client clients[], int& numClients)
                 }
 
                 if (!buyerExists) {
-                    std::cout << "Cliente con ID " << buyerClientId << " no encontrado, carro no agregado." << std::endl;
+                    std::cout << "Cliente con ID " << buyerClientId << " no encontrado. La actualización no se realizó." << std::endl;
                     return;
                 }
 
-                //Actualizar informacion con el ID del comprador
+                // Actualizar la información del carro con el ID del comprador
                 cars[i].setSoldTo(buyerClientId);
             }
 
-            // Variable para el precio de venta del carro
+            // Precio de venta del carro
             int soldCarPrice;
-
-            // Input validation para el precio
-            std::cout << "Introduzca por cuanto fue vendido el carro: ";
+            // Validación de entrada para el precio
+            std::cout << "Introduzca el precio de venta del carro: ";
             while (!(std::cin >> soldCarPrice) || soldCarPrice <= 0) {
-                std::cout << "Valor invalido, introduzca un valor valido: ";
+                std::cout << "Valor inválido. Introduzca un valor válido: ";
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             }
 
-            // Confirmar con el usuario
+            // Confirmación con el usuario
             int confirm;
-            std::cout << "Confirmar la venta? (Si: 1, No: 0): ";
+            std::cout << "¿Confirmar la venta? (Si: 1, No: 0): ";
             std::cin >> confirm;
 
             if (confirm == 1) {
                 // Establecer el precio de venta del carro
                 cars[i].setSoldFor(soldCarPrice);
 
-                //Escribir los datos del carro en el archivo
-                std::ofstream carsFile("../assets/cars_data.csv");
-                for (int j = 0; j < numCars; ++j) {
-                    carsFile << cars[j].getId() << ';' << cars[j].getMaker() << ';' << cars[j].getModel() << ';' << cars[j].getYear() << ';'
-                             << cars[j].getSoldTo() << ';' << cars[j].getBoughtTo() << ';' << cars[j].getSoldFor() << ';' << cars[j].getBoughtFor() << std::endl;
+                // Actualizar el archivo CSV con los datos actualizados de los carros
+                std::fstream carsFile("../assets/cars_data.csv", std::ios::in | std::ios::out);
+                if (carsFile.is_open()) {
+                    // Saltar la primera línea (encabezado)
+                    std::string header;
+                    std::getline(carsFile, header);
+                    // Mover el cursor al principio de la parte de datos después del encabezado
+                    carsFile.seekp(carsFile.tellg());
+
+                    // Escribir los datos actualizados de los carros en el archivo
+                    for (int j = 0; j < numCars; ++j) {
+                    	if (j == 0 ) {
+                    		continue;
+						} else {
+							carsFile << cars[j].getId() << ';' << cars[j].getMaker() << ';' << cars[j].getModel() << ';'
+                                 << cars[j].getYear() << ';' << cars[j].getSoldTo() << ';' << cars[j].getBoughtTo() << ';'
+                                 << cars[j].getSoldFor() << ';' << cars[j].getBoughtFor() << std::endl;
+						}
+                        
+                    }
+                    carsFile.close();
+                    std::cout << "La información del carro se actualizó exitosamente." << std::endl;
+                } else {
+                    std::cerr << "No se pudo abrir el archivo cars_data.csv para actualizar la información del carro." << std::endl;
                 }
-                carsFile.close();
-
-                std::cout << "Informacion del carro agregado exitosamente." << std::endl;
             } else {
-                std::cout << "Venta cancelada, informacion del carro no fue actualizada." << std::endl;
+                std::cout << "La venta se canceló. La información del carro no se actualizó." << std::endl;
             }
-
             return;
         }
     }
-
-    std::cout << "Carro con ID " << soldCarId << " no fue encontrado, no se realizo ninguna actualizacion." << std::endl;
+    std::cout << "El carro con ID " << soldCarId << " no fue encontrado. No se realizó ninguna actualización." << std::endl;
 }
 
 void getProfit(const Cars cars[], int size) {
@@ -271,18 +299,29 @@ void deleteItem(std::fstream& file, std::fstream& file2, int numClients, int num
                 return;
             }
 
-            std::fstream tempFile("../assets/temp.csv", std::ios::out | std::ios::app);
+            std::fstream tempFile("../assets/temp.csv", std::ios::out); // Open in std::ios::out mode
             Cars currentCar;
+          tempFile<<"id;maker;model;year;sold_to;bought_to;sold_for;bought_for"<<std::endl;
+          std::cout<<numCars<<std::endl;
             for (int i = 0; i < numCars; ++i) {
-                if (cars[i].getId() != carIdToDelete) {
-                    writeCurrentCar(tempFile, cars[i]);
-                }
+            	if(i==0) continue;
+              if (cars[i].getId() != carIdToDelete) {
+              	bool isFirstLine;
+				    writeCurrentCar(tempFile, cars[i]);
+				    if (isFirstLine)
+				    isFirstLine = false;
+				    
+				}
             }
             tempFile.close();
 
+            // Close the original file
+            file.close();
+            // Remove the original file and rename the temporary file
             std::remove("../assets/cars_data.csv");
             std::rename("../assets/temp.csv", "../assets/cars_data.csv");
-
+            // Reopen the original file
+            file.open("../assets/cars_data.csv", std::ios::in | std::ios::out);
             std::cout << "Carro eliminado exitosamente." << std::endl;
             break;
         }
@@ -309,17 +348,30 @@ void deleteItem(std::fstream& file, std::fstream& file2, int numClients, int num
                 std::cout << "Cliente con ID " << clientIdToDelete << " no encontrado." << std::endl;
                 return;
             }
-
-            std::fstream tempFile("../assets/temp.csv", std::ios::out | std::ios::app);
-            for (int i = 0; i < numClients; ++i) {
-                if (clients[i].getId() != clientIdToDelete) {
-                    writeCurrentClient(tempFile, clients[i]);
-                }
-            }
+            
+            std::fstream tempFile("../assets/temp.csv", std::ios::out); // Open in std::ios::out mode
+            tempFile<<"id;first_name;last_name;email;age"<<std::endl;
+            bool isFirstLine = true;
+			for (int i = 0; i < numCars; ++i) {
+				if(i==0) continue;
+    			if (cars[i].getId() != clientIdToDelete) {
+        			writeCurrentCar(tempFile, cars[i]);
+        			if (isFirstLine) {
+           				isFirstLine = false;
+       				}
+    			}
+			}
             tempFile.close();
 
+            // Close the original file
+            file2.close();
+
+            // Remove the original file and rename the temporary file
             std::remove("../assets/clients.csv");
             std::rename("../assets/temp.csv", "../assets/clients.csv");
+
+            // Reopen the original file
+            file2.open("../assets/clients.csv", std::ios::in | std::ios::out);
 
             std::cout << "Cliente eliminado exitosamente." << std::endl;
             break;
