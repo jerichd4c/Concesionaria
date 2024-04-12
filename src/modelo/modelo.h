@@ -60,7 +60,7 @@ private:
 };
 
 void writeCurrentCar(std::fstream& file, const Cars& car);
-void writeCurrentClient(std::fstream& file, const Client& client, bool isFirstLine);
+void writeCurrentClient(std::fstream& file2, const Client& client, bool isFirstLine);
 void readClientsFromFile(const std::string& filename, Client clients[], int& size);
 void readCarsFromFile(const std::string& filename, Cars cars[], int& size);
 void readCurrentCar(std::fstream& file);

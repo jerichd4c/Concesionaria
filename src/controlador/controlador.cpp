@@ -300,7 +300,7 @@ void deleteItem(std::fstream& file, std::fstream& file2, int numClients, int num
             }
 
             std::fstream tempFile("../assets/temp.csv", std::ios::out); // Open in std::ios::out mode
-            Cars currentCar;
+            
           tempFile<<"id;maker;model;year;sold_to;bought_to;sold_for;bought_for"<<std::endl;
           std::cout<<numCars<<std::endl;
             for (int i = 0; i < numCars; ++i) {
@@ -348,31 +348,24 @@ void deleteItem(std::fstream& file, std::fstream& file2, int numClients, int num
                 std::cout << "Cliente con ID " << clientIdToDelete << " no encontrado." << std::endl;
                 return;
             }
-            
-            std::fstream tempFile("../assets/temp.csv", std::ios::out); // Open in std::ios::out mode
-            tempFile<<"id;first_name;last_name;email;age"<<std::endl;
-            bool isFirstLine = true;
-			for (int i = 0; i < numCars; ++i) {
+            std::fstream tempFile2("../assets/temp2.csv", std::ios::out); // Open in std::ios::out mode
+            tempFile2<<"id;first_name;last_name;email;age"<<std::endl;
+			for (int i = 0; i < numClients; ++i) {
 				if(i==0) continue;
-    			if (cars[i].getId() != clientIdToDelete) {
-        			writeCurrentCar(tempFile, cars[i]);
-        			if (isFirstLine) {
+    			if (clients[i].getId() != clientIdToDelete) {
+        			bool isFirstLine;
+					writeCurrentClient(tempFile2, clients[i]);
+        			if (isFirstLine) 
            				isFirstLine = false;
-       				}
     			}
 			}
-            tempFile.close();
-
-            // Close the original file
+            //  Close the original file
             file2.close();
-
+            tempFile2.close();
             // Remove the original file and rename the temporary file
             std::remove("../assets/clients.csv");
-            std::rename("../assets/temp.csv", "../assets/clients.csv");
-
-            // Reopen the original file
-            file2.open("../assets/clients.csv", std::ios::in | std::ios::out);
-
+            std::rename("../assets/temp2.csv", "../assets/clients.csv");
+           // Reopen the original file
             std::cout << "Cliente eliminado exitosamente." << std::endl;
             break;
         }

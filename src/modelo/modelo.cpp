@@ -75,8 +75,8 @@ Client readCurrentClient(std::fstream& file) {
     return client;
 }
 
-void writeCurrentClient(std::fstream& file, const Client& client) {
-    file << client.getId() << ';' << client.getFirstName() << ';' << client.getLastName() << ';' << client.getEmail() << ';' << client.getAge() << '\n';
+void writeCurrentClient(std::fstream& file2, const Client& client) {
+    file2 << client.getId() << ';' << client.getFirstName() << ';' << client.getLastName() << ';' << client.getEmail() << ';' << client.getAge() << '\n';
 }
 
 void readClientsFromFile(const std::string& filename, Client clients[], int& size) {
